@@ -1,13 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/nerd500/clinic-appointment/routes"
+	_ "github.com/lib/pq"
+	"github.com/nerd500/clinic-appointment/internal/database"
 )
+
+type apiConfig struct {
+	DB *database.Queries
+}
 
 func main() {
 
@@ -17,10 +23,27 @@ func main() {
 	if portString == "" {
 		log.Fatal("PORT string not found in the env")
 	}
+	dbURL := os.Getenv("dbURL")
+	if dbURL == "" {
+		log.Fatal("dbURL string not found in the env")
+	}
+
+	// DB Config
+	conn, err := sql.Open("postgres", dbURL)
+
+	if err != nil {
+		log.Fatal("Can't connect to database:", err)
+	}
+
+	dbQuery := database.New(conn)
+
+	apiCfg := apiConfig{
+		DB: dbQuery,
+	}
 
 	// router cinfig
-	router := routes.GetRouter()
-	router.Mount("/v1", routes.V1Router())
+	router := GetRouter()
+	router.Mount("/v1", V1Router(apiCfg))
 
 	// server config
 	srv := &http.Server{
@@ -30,7 +53,8 @@ func main() {
 
 	// Server starting and error handling
 	log.Println("Starting server at port: ", portString)
-	err := srv.ListenAndServe()
+
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
 	}

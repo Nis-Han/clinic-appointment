@@ -5,18 +5,19 @@
 package database
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type User struct {
-	ID                 uuid.UUID
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	CfID               string
-	VerificationStatus sql.NullBool
-	Email              string
-	HashedPassword     string
+	ID             uuid.UUID
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	FirstName      string
+	LastName       string
+	ContactNo      string
+	UserKey        string
+	IsAdmin        bool
+	HashedPassword string
 }

@@ -5,11 +5,11 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100),
+    last_name VARCHAR(100) NOT  NULL,
     contact_no TEXT NOT NULL UNIQUE,
     user_key TEXT NOT NULL,
-    is_admin BOOLEAN,
-    hashed_password VARCHAR(100) NOT NULL
+    is_admin BOOLEAN NOT NULL,
+    hashed_password TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_id ON users(id);
